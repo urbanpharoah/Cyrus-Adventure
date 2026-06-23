@@ -201,6 +201,30 @@ const LEVELS=[
   }
 ];
 
+// Remove background from Cyrus sprite at page load so he appears clean in-game
+let CYRUS_NOBG=CYRUS_IMG;
+(function(){
+  const img=new Image();
+  img.onload=()=>{
+    const c=document.createElement('canvas');
+    c.width=img.width;c.height=img.height;
+    const ctx=c.getContext('2d');
+    ctx.drawImage(img,0,0);
+    const d=ctx.getImageData(0,0,c.width,c.height),px=d.data;
+    // Sample all 4 corners to get average background color
+    const corners=[0,(c.width-1)*4,(c.height-1)*c.width*4,((c.height-1)*c.width+(c.width-1))*4];
+    let br=0,bg=0,bb=0;
+    corners.forEach(i=>{br+=px[i]/4;bg+=px[i+1]/4;bb+=px[i+2]/4;});
+    for(let i=0;i<px.length;i+=4){
+      const dr=px[i]-br,dg=px[i+1]-bg,db=px[i+2]-bb;
+      if(Math.sqrt(dr*dr+dg*dg+db*db)<55)px[i+3]=0;
+    }
+    ctx.putImageData(d,0,0);
+    CYRUS_NOBG=c.toDataURL('image/png');
+  };
+  img.src=CYRUS_IMG;
+})();
+
 function launchGame(lvlIdx){
   if(pGame){pGame.destroy(true);pGame=null;}
   currentLevel=lvlIdx+1;
@@ -223,7 +247,7 @@ function launchGame(lvlIdx){
   let lastSafeX=120,lastSafeY=460;
 
   function preload(){
-    this.textures.addBase64('cyrus',CYRUS_IMG);
+    this.textures.addBase64('cyrus',CYRUS_NOBG);
     const bc=document.createElement('canvas');bc.width=1;bc.height=1;
     this.textures.addCanvas('blank',bc);
   }
