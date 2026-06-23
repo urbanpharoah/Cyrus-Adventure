@@ -1,0 +1,6 @@
+node_modules/
+.DS_Store
+*.log
+cyrus_b64.txt
+cyrus_sprite.png
+cyrus.png

@@ -1,0 +1,13 @@
+{
+  "name": "cyrus-adventure",
+  "version": "1.0.0",
+  "description": "Cyrus's Adventure Game",
+  "scripts": {
+    "dev": "npx serve public",
+    "build": "echo 'Static site - no build needed'",
+    "start": "npx serve public"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
