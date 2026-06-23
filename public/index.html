@@ -219,7 +219,7 @@ function launchGame(lvlIdx){
   let playerInv=0,hpRegenT=0;
 
   function preload(){
-    this.textures.addBase64('cyrus',CYRUS_IMG);
+    this.load.image('cyrus',CYRUS_IMG);
   }
 
   function create(){
@@ -270,7 +270,7 @@ function launchGame(lvlIdx){
         for(let by=p.y;by<p.y+p.h;by+=20)g.lineBetween(p.x,by,p.x+p.w,by);
       }
       const pl=platforms.create(p.x+p.w/2,p.y+p.h/2,null);
-      pl.setSize(p.w,p.h).refreshBody().setVisible(false);
+      pl.body.setSize(p.w,p.h);pl.refreshBody();pl.setVisible(false);
     });
 
     // Coins
@@ -281,7 +281,7 @@ function launchGame(lvlIdx){
       cg.fillStyle(0xffaa00,1);cg.fillCircle(c.x,c.y,7);
       cg.fillStyle(0xffee88,1);cg.fillCircle(c.x-3,c.y-3,3);
       const coin=coins.create(c.x,c.y,null);
-      coin.setSize(22,22).refreshBody().setVisible(false);
+      coin.body.setSize(22,22);coin.refreshBody();coin.setVisible(false);
       coin._g=cg;
     });
 
@@ -291,7 +291,7 @@ function launchGame(lvlIdx){
     fg.fillStyle(0xff2222,1);fg.fillTriangle(ld.flagX+7,375,ld.flagX+68,398,ld.flagX+7,422);
     fg.fillStyle(0xffee00,0.9);fg.fillCircle(ld.flagX+3,540,14);
     flag=this.physics.add.staticImage(ld.flagX+35,455,null);
-    flag.setSize(80,190).refreshBody().setVisible(false);
+    flag.body.setSize(80,190);flag.refreshBody();flag.setVisible(false);
 
     // Player using real Cyrus photo
     player=this.physics.add.image(120,460,'cyrus');
