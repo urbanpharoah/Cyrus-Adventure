@@ -272,8 +272,9 @@ function launchGame(lvlIdx){
         for(let bx=p.x;bx<p.x+p.w;bx+=40)g.lineBetween(bx,p.y,bx,p.y+p.h);
         for(let by=p.y;by<p.y+p.h;by+=20)g.lineBetween(p.x,by,p.x+p.w,by);
       }
-      const pl=platforms.create(p.x+p.w/2,p.y+p.h/2,'blank');
-      pl.body.setSize(p.w,p.h);pl.refreshBody();pl.setAlpha(0);
+      const pl=scene.add.zone(p.x+p.w/2,p.y+p.h/2,p.w,p.h);
+      scene.physics.add.existing(pl,true);
+      platforms.add(pl);
     });
 
     // Coins
@@ -283,9 +284,10 @@ function launchGame(lvlIdx){
       cg.fillStyle(0xffee00,1);cg.fillCircle(c.x,c.y,11);
       cg.fillStyle(0xffaa00,1);cg.fillCircle(c.x,c.y,7);
       cg.fillStyle(0xffee88,1);cg.fillCircle(c.x-3,c.y-3,3);
-      const coin=coins.create(c.x,c.y,'blank');
-      coin.body.setSize(22,22);coin.refreshBody();coin.setAlpha(0);
+      const coin=scene.add.zone(c.x,c.y,22,22);
+      scene.physics.add.existing(coin,true);
       coin._g=cg;
+      coins.add(coin);
     });
 
     // Flag
@@ -293,8 +295,8 @@ function launchGame(lvlIdx){
     fg.fillStyle(0xcccccc,1);fg.fillRect(ld.flagX,375,7,165);
     fg.fillStyle(0xff2222,1);fg.fillTriangle(ld.flagX+7,375,ld.flagX+68,398,ld.flagX+7,422);
     fg.fillStyle(0xffee00,0.9);fg.fillCircle(ld.flagX+3,540,14);
-    flag=this.physics.add.staticImage(ld.flagX+35,455,'blank');
-    flag.body.setSize(80,190);flag.refreshBody();flag.setAlpha(0);
+    flag=this.add.zone(ld.flagX+35,455,80,190);
+    this.physics.add.existing(flag,true);
 
     // Player using real Cyrus photo
     player=this.physics.add.image(120,460,'cyrus');
@@ -483,9 +485,8 @@ function launchGame(lvlIdx){
       const rt=scene.add.text(player.x,player.y-28,'🦕 ROAAR!',{fontSize:'24px',fontFamily:'Courier New',fontStyle:'bold',color:'#88ff44',stroke:'#224400',strokeThickness:3});
       rt.setDepth(20);
       scene.tweens.add({targets:rt,y:rt.y-48,alpha:0,scaleX:1.6,scaleY:1.6,duration:650,onComplete:()=>rt.destroy()});
-      const roar=scene.physics.add.image(player.x,player.y,'blank');
-      roar.body.setSize(220,160);roar.setAlpha(0);
-      roar.setGravityY(-620);
+      const roar=scene.add.zone(player.x,player.y,220,160);
+      scene.physics.add.existing(roar,true);
       roarGroup.add(roar);
       scene.time.delayedCall(220,()=>{if(roar.active)roar.destroy();});
       scene.time.delayedCall(350,()=>{enemies.getChildren().forEach(e=>{e.roarHit=false;});});
