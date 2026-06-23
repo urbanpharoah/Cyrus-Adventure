@@ -217,9 +217,11 @@ function launchGame(lvlIdx){
   let player,platforms,enemies,coins,bullets,roarGroup,flag;
   let facing=1,jumpCD=0,waterCD=0,roarCD=0;
   let playerInv=0,hpRegenT=0;
+  let lastSafeX=120,lastSafeY=460;
 
   function preload(){
-    this.textures.addBase64('cyrus',CYRUS_IMG);
+    this.load.image('cyrus',CYRUS_IMG);
+    this.load.image('blank','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIABQAABjE+ibYAAAAASUVORK5CYII=');
   }
 
   function create(){
@@ -269,8 +271,8 @@ function launchGame(lvlIdx){
         for(let bx=p.x;bx<p.x+p.w;bx+=40)g.lineBetween(bx,p.y,bx,p.y+p.h);
         for(let by=p.y;by<p.y+p.h;by+=20)g.lineBetween(p.x,by,p.x+p.w,by);
       }
-      const pl=platforms.create(p.x+p.w/2,p.y+p.h/2,null);
-      pl.setSize(p.w,p.h).refreshBody().setVisible(false);
+      const pl=platforms.create(p.x+p.w/2,p.y+p.h/2,'blank');
+      pl.body.setSize(p.w,p.h);pl.refreshBody();pl.setVisible(false);
     });
 
     // Coins
@@ -280,8 +282,8 @@ function launchGame(lvlIdx){
       cg.fillStyle(0xffee00,1);cg.fillCircle(c.x,c.y,11);
       cg.fillStyle(0xffaa00,1);cg.fillCircle(c.x,c.y,7);
       cg.fillStyle(0xffee88,1);cg.fillCircle(c.x-3,c.y-3,3);
-      const coin=coins.create(c.x,c.y,null);
-      coin.setSize(22,22).refreshBody().setVisible(false);
+      const coin=coins.create(c.x,c.y,'blank');
+      coin.body.setSize(22,22);coin.refreshBody();coin.setVisible(false);
       coin._g=cg;
     });
 
@@ -290,8 +292,8 @@ function launchGame(lvlIdx){
     fg.fillStyle(0xcccccc,1);fg.fillRect(ld.flagX,375,7,165);
     fg.fillStyle(0xff2222,1);fg.fillTriangle(ld.flagX+7,375,ld.flagX+68,398,ld.flagX+7,422);
     fg.fillStyle(0xffee00,0.9);fg.fillCircle(ld.flagX+3,540,14);
-    flag=this.physics.add.staticImage(ld.flagX+35,455,null);
-    flag.setSize(80,190).refreshBody().setVisible(false);
+    flag=this.physics.add.staticImage(ld.flagX+35,455,'blank');
+    flag.body.setSize(80,190);flag.refreshBody();flag.setVisible(false);
 
     // Player using real Cyrus photo
     player=this.physics.add.image(120,460,'cyrus');
@@ -434,6 +436,7 @@ function launchGame(lvlIdx){
     if(hpRegenT>3.5&&hp<MAX_HP){hp=Math.min(MAX_HP,hp+1);updateHUD();hpRegenT=0;}
 
     const onGround=player.body.blocked.down;
+    if(onGround){lastSafeX=player.x;lastSafeY=player.y;}
 
     if(keys.left){player.setVelocityX(-210);facing=-1;player.setFlipX(true);}
     else if(keys.right){player.setVelocityX(210);facing=1;player.setFlipX(false);}
@@ -476,8 +479,8 @@ function launchGame(lvlIdx){
       const rt=scene.add.text(player.x,player.y-28,'🦕 ROAAR!',{fontSize:'24px',fontFamily:'Courier New',fontStyle:'bold',color:'#88ff44',stroke:'#224400',strokeThickness:3});
       rt.setDepth(20);
       scene.tweens.add({targets:rt,y:rt.y-48,alpha:0,scaleX:1.6,scaleY:1.6,duration:650,onComplete:()=>rt.destroy()});
-      const roar=scene.physics.add.image(player.x,player.y,null);
-      roar.setSize(220,160).setVisible(false);
+      const roar=scene.physics.add.image(player.x,player.y,'blank');
+      roar.body.setSize(220,160);roar.setVisible(false);
       roar.setGravityY(-620);
       roarGroup.add(roar);
       scene.time.delayedCall(220,()=>{if(roar.active)roar.destroy();});
@@ -497,13 +500,8 @@ function launchGame(lvlIdx){
     });
 
     if(player.y>680){
-      hp=Math.max(0,hp-2);updateHUD();
-      player.setPosition(120,460);
+      player.setPosition(lastSafeX,lastSafeY-60);
       player.setVelocity(0,0);
-      if(hp<=0){
-        showScreen('💔 Try Again!','Cyrus fell off! He can do it!','▶ Try Again!',()=>launchGame(currentLevel-1));
-        if(pGame){pGame.destroy(true);pGame=null;}
-      }
     }
   }
 }
