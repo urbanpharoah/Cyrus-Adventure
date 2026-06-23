@@ -220,8 +220,9 @@ function launchGame(lvlIdx){
   let lastSafeX=120,lastSafeY=460;
 
   function preload(){
-    this.load.image('cyrus',CYRUS_IMG);
-    this.load.image('blank','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIABQAABjE+ibYAAAAASUVORK5CYII=');
+    this.textures.addBase64('cyrus',CYRUS_IMG);
+    const bc=document.createElement('canvas');bc.width=1;bc.height=1;
+    this.textures.addCanvas('blank',bc);
   }
 
   function create(){
@@ -272,7 +273,7 @@ function launchGame(lvlIdx){
         for(let by=p.y;by<p.y+p.h;by+=20)g.lineBetween(p.x,by,p.x+p.w,by);
       }
       const pl=platforms.create(p.x+p.w/2,p.y+p.h/2,'blank');
-      pl.body.setSize(p.w,p.h);pl.refreshBody();pl.setVisible(false);
+      pl.body.setSize(p.w,p.h);pl.refreshBody();pl.setAlpha(0);
     });
 
     // Coins
@@ -283,7 +284,7 @@ function launchGame(lvlIdx){
       cg.fillStyle(0xffaa00,1);cg.fillCircle(c.x,c.y,7);
       cg.fillStyle(0xffee88,1);cg.fillCircle(c.x-3,c.y-3,3);
       const coin=coins.create(c.x,c.y,'blank');
-      coin.body.setSize(22,22);coin.refreshBody();coin.setVisible(false);
+      coin.body.setSize(22,22);coin.refreshBody();coin.setAlpha(0);
       coin._g=cg;
     });
 
@@ -293,7 +294,7 @@ function launchGame(lvlIdx){
     fg.fillStyle(0xff2222,1);fg.fillTriangle(ld.flagX+7,375,ld.flagX+68,398,ld.flagX+7,422);
     fg.fillStyle(0xffee00,0.9);fg.fillCircle(ld.flagX+3,540,14);
     flag=this.physics.add.staticImage(ld.flagX+35,455,'blank');
-    flag.body.setSize(80,190);flag.refreshBody();flag.setVisible(false);
+    flag.body.setSize(80,190);flag.refreshBody();flag.setAlpha(0);
 
     // Player using real Cyrus photo
     player=this.physics.add.image(120,460,'cyrus');
@@ -301,6 +302,9 @@ function launchGame(lvlIdx){
     player.setCollideWorldBounds(false);
     player.body.setSize(44,80).setOffset(14,10);
     player.setDepth(10);
+    // If addBase64 hasn't finished yet, swap texture in once it's ready
+    const onTexAdd=(key)=>{if(key==='cyrus'&&player&&player.active){player.setTexture('cyrus');player.setScale(0.7);scene.textures.off('addtexture',onTexAdd);}};
+    if(!scene.textures.exists('cyrus'))scene.textures.on('addtexture',onTexAdd);
 
     bullets=this.physics.add.group();
     roarGroup=this.physics.add.group();
@@ -480,7 +484,7 @@ function launchGame(lvlIdx){
       rt.setDepth(20);
       scene.tweens.add({targets:rt,y:rt.y-48,alpha:0,scaleX:1.6,scaleY:1.6,duration:650,onComplete:()=>rt.destroy()});
       const roar=scene.physics.add.image(player.x,player.y,'blank');
-      roar.body.setSize(220,160);roar.setVisible(false);
+      roar.body.setSize(220,160);roar.setAlpha(0);
       roar.setGravityY(-620);
       roarGroup.add(roar);
       scene.time.delayedCall(220,()=>{if(roar.active)roar.destroy();});
