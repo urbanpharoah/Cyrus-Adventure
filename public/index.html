@@ -258,14 +258,14 @@ function launchGame(lvlIdx){
     player.setScale(0.11);
     player.setCollideWorldBounds(false);
     // body.halfHeight=81 so body.bottom reaches the actual physics floor while sprite feet align with visual floor
-    player.body.setSize(30,342,true);
+    player.body.setSize(30,502,true);
     player.setDepth(10);
     // addBase64 is async — re-apply scale+body once real texture is swapped in
     const onTexAdd=(key)=>{
       if(key==='cyrus'&&player&&player.active){
         player.setTexture('cyrus');
         player.setScale(0.11);
-        player.body.setSize(30,342,true);
+        player.body.setSize(30,502,true);
         scene.textures.off('addtexture',onTexAdd);
       }
     };
