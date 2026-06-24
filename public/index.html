@@ -231,7 +231,7 @@ function launchGame(lvlIdx){
       cg.fillStyle(0xffee00,1);cg.fillCircle(c.x,c.y,11);
       cg.fillStyle(0xffaa00,1);cg.fillCircle(c.x,c.y,7);
       cg.fillStyle(0xffee88,1);cg.fillCircle(c.x-3,c.y-3,3);
-      const coin=scene.add.zone(c.x,c.y,22,22);
+      const coin=scene.add.zone(c.x,c.y,55,55);
       scene.physics.add.existing(coin,true);
       coin._g=cg;
       coins.add(coin);
@@ -256,15 +256,15 @@ function launchGame(lvlIdx){
     player=this.physics.add.image(120,490,'cyrus');
     player.setScale(0.11);
     player.setCollideWorldBounds(false);
-    // body height=81 matches displayH so feet sit exactly at the floor surface
-    player.body.setSize(30,81,true);
+    // body height=61: body.bottom = player.y+30.5, feet sit ~10px into floor surface
+    player.body.setSize(30,61,true);
     player.setDepth(10);
     // addBase64 is async — re-apply scale+body once real texture is swapped in
     const onTexAdd=(key)=>{
       if(key==='cyrus'&&player&&player.active){
         player.setTexture('cyrus');
         player.setScale(0.11);
-        player.body.setSize(30,81,true);
+        player.body.setSize(30,61,true);
         scene.textures.off('addtexture',onTexAdd);
       }
     };
