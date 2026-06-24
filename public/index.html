@@ -502,7 +502,7 @@ function launchGame(lvlIdx){
       if(currentLevel<3){
         showScreen('? AMAZING!','Level '+currentLevel+' complete!<br><br>Cyrus is a SUPERSTAR! ??','? Next Level!',()=>launchGame(currentLevel));
       } else {
-        showScreen('?? YOU WIN!','Cyrus beat ALL 3 levels!<br><br>CYRUS IS THE CHAMPION! ????','? Play Again!',()=>{hp=MAX_HP;score=0;currentLevel=1;updateHUD();launchGame(0);});
+        showScreen('?? YOU WIN!','Cyrus beat ALL 3 levels!<br><br>CYRUS IS THE CHAMPION! ????','? Play Again!',()=>{hp=MAX_HP;score=0;currentLevel=1;updateHUD();startMusic();launchGame(0);});
       }
       if(pGame){pGame.destroy(true);pGame=null;}
     });
