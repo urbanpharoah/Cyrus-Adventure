@@ -27,9 +27,9 @@ canvas{display:block;}
 .btn-row{display:flex;gap:8px;pointer-events:all;}
 .right-controls{display:flex;flex-direction:column;align-items:flex-end;gap:8px;pointer-events:all;}
 #overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,0.8);font-family:'Courier New',monospace;}
-#overlay h1{font-size:clamp(26px,8vw,56px);color:#ffe066;text-shadow:3px 3px 0 #996600;margin-bottom:10px;text-align:center;line-height:1.2;}
+#overlay h1{font-size:clamp(26px,8vw,56px);color:#ffe066;text-shadow:3px 3px 0 #996600;margin-bottom:10px;text-align:center;line-height:1.2;width:100%;display:block;}
 #overlay p{color:#fff;font-size:clamp(13px,3vw,20px);margin-bottom:28px;text-align:center;padding:0 20px;line-height:1.6;}
-#play-btn{background:#e03030;color:#fff;border:none;border-radius:18px;padding:18px 48px;font-size:clamp(18px,4vw,28px);font-weight:bold;cursor:pointer;font-family:'Courier New',monospace;box-shadow:0 6px 0 #880000;letter-spacing:1px;-webkit-tap-highlight-color:transparent;}
+#play-btn{background:#e03030;color:#fff;border:none;border-radius:18px;padding:18px 48px;font-size:clamp(18px,4vw,28px);font-weight:bold;cursor:pointer;font-family:'Courier New',monospace;box-shadow:0 6px 0 #880000;letter-spacing:1px;-webkit-tap-highlight-color:transparent;text-align:center;display:flex;align-items:center;justify-content:center;}
 #play-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #880000;}
 #cooldown-water,#cooldown-roar{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);font-size:10px;color:rgba(255,255,255,0.8);font-family:'Courier New',monospace;pointer-events:none;}
 </style>
@@ -318,12 +318,12 @@ function launchGame(lvlIdx){
 
     // Player using real Cyrus photo
     player=this.physics.add.image(120,460,'cyrus');
-    player.setScale(1.0);
+    player.setScale(1.25);
     player.setCollideWorldBounds(false);
-    player.body.setSize(55,92).setOffset(9,4);
+    player.body.setSize(60,96).setOffset(8,2);
     player.setDepth(10);
     // If addBase64 hasn't finished yet, swap texture in once it's ready
-    const onTexAdd=(key)=>{if(key==='cyrus'&&player&&player.active){player.setTexture('cyrus');player.setScale(1.0);scene.textures.off('addtexture',onTexAdd);}};
+    const onTexAdd=(key)=>{if(key==='cyrus'&&player&&player.active){player.setTexture('cyrus');player.setScale(1.25);scene.textures.off('addtexture',onTexAdd);}};
     if(!scene.textures.exists('cyrus'))scene.textures.on('addtexture',onTexAdd);
 
     bullets=this.physics.add.group();
