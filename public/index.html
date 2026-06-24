@@ -72,6 +72,33 @@ let pGame = null;
 let isCaveLevel=false, caveReturn=null, warpBlockUntil=0;
 let keys = {left:false,right:false,jump:false,water:false,roar:false};
 
+// Background music — shuffled playlist, starts on Play
+const TRACKS=['mqrlbqjz.mp3','mqrlf0tj.mp3','mqrl5fyw.mp3','mqrl6qn7.mp3'];
+let musicAudio=null, musicOrder=[], musicIdx=0;
+function shuffleTracks(){
+  musicOrder=[...TRACKS];
+  for(let i=musicOrder.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [musicOrder[i],musicOrder[j]]=[musicOrder[j],musicOrder[i]];
+  }
+}
+function playNextTrack(){
+  if(!musicOrder.length)shuffleTracks();
+  const track=musicOrder[musicIdx%musicOrder.length];
+  musicIdx++;
+  if(!musicAudio)musicAudio=new Audio();
+  musicAudio.src=track;
+  musicAudio.volume=0.45;
+  musicAudio.onended=playNextTrack;
+  musicAudio.play().catch(()=>{});
+}
+function startMusic(){
+  shuffleTracks();
+  musicIdx=0;
+  if(!musicAudio)musicAudio=new Audio();
+  playNextTrack();
+}
+
 function updateHUD(){
   document.getElementById('health-display').textContent = Array.from({length:MAX_HP},(_,i)=>i<hp?'❤️':'🖤').join('');
   document.getElementById('score-display').textContent = '⭐ '+score;
@@ -106,6 +133,7 @@ document.addEventListener('keyup',e=>{
 document.getElementById('play-btn').onclick=()=>{
   document.getElementById('overlay').style.display='none';
   hp=MAX_HP;score=0;currentLevel=1;updateHUD();
+  startMusic();
   launchGame(0);
 };
 
