@@ -259,12 +259,12 @@ function launchGame(lvlIdx){
 
     // Player using real Cyrus photo
     player=this.physics.add.image(120,460,'cyrus');
-    player.setScale(1.25);
+    player.setScale(0.11);
     player.setCollideWorldBounds(false);
-    player.body.setSize(60,96).setOffset(8,2);
+    player.body.setSize(30,75).setOffset(3,40);
     player.setDepth(10);
     // If addBase64 hasn't finished yet, swap texture in once it's ready
-    const onTexAdd=(key)=>{if(key==='cyrus'&&player&&player.active){player.setTexture('cyrus');player.setScale(1.25);scene.textures.off('addtexture',onTexAdd);}};
+    const onTexAdd=(key)=>{if(key==='cyrus'&&player&&player.active){player.setTexture('cyrus');player.setScale(0.11);scene.textures.off('addtexture',onTexAdd);}};
     if(!scene.textures.exists('cyrus'))scene.textures.on('addtexture',onTexAdd);
 
     bullets=this.physics.add.group();
