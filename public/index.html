@@ -278,17 +278,25 @@ function launchGame(lvlIdx){
     ld.enemies.forEach(e=>{
       const eg=this.make.graphics({x:0,y:0,add:false});
       if(e.t==='tarantula'){
-        // Long legs first (drawn behind body)
+        // Two-segment bent legs drawn behind body
+        // Each entry: [x1,y1, kneeX,kneeY, footX,footY]
+        const legs=[
+          [34,21, 14,6,  3,18],  // front-upper left
+          [32,25, 10,16, 1,30],  // front-lower left
+          [32,30, 10,36, 2,46],  // back-upper left
+          [33,35, 14,47, 4,54],  // back-lower left
+          [46,21, 66,6,  77,18], // front-upper right
+          [48,25, 70,16, 79,30], // front-lower right
+          [48,30, 70,36, 78,46], // back-upper right
+          [47,35, 66,47, 76,54], // back-lower right
+        ];
         eg.lineStyle(3.5,0x4a1e08,1);
-        // Left legs: [fromX,fromY, toX,toY]
-        [[32,22,3,4],[30,26,1,22],[30,30,2,38],[32,35,5,52]].forEach(([x1,y1,x2,y2])=>eg.lineBetween(x1,y1,x2,y2));
-        // Right legs (mirror)
-        [[48,22,77,4],[50,26,79,22],[50,30,78,38],[48,35,75,52]].forEach(([x1,y1,x2,y2])=>eg.lineBetween(x1,y1,x2,y2));
+        legs.forEach(([x1,y1,kx,ky,fx,fy])=>{eg.lineBetween(x1,y1,kx,ky);eg.lineBetween(kx,ky,fx,fy);});
         // Abdomen
         eg.fillStyle(0x6b2f0c,1);eg.fillEllipse(40,38,28,22);
         // Cephalothorax
         eg.fillStyle(0x9b5020,1);eg.fillEllipse(40,22,30,22);
-        // Fur highlights
+        // Fur sheen
         eg.fillStyle(0xb06030,0.5);eg.fillEllipse(40,20,22,14);
         // Eyes
         eg.fillStyle(0xff2200,1);eg.fillCircle(35,16,3.5);eg.fillCircle(45,16,3.5);
