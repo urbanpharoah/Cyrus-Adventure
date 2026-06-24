@@ -134,28 +134,8 @@ const LEVELS=[
 ];
 
 // Remove background from Cyrus sprite at page load so he appears clean in-game
-let CYRUS_NOBG=CYRUS_IMG;
-(function(){
-  const img=new Image();
-  img.onload=()=>{
-    const c=document.createElement('canvas');
-    c.width=img.width;c.height=img.height;
-    const ctx=c.getContext('2d');
-    ctx.drawImage(img,0,0);
-    const d=ctx.getImageData(0,0,c.width,c.height),px=d.data;
-    // Sample all 4 corners to get average background color
-    const corners=[0,(c.width-1)*4,(c.height-1)*c.width*4,((c.height-1)*c.width+(c.width-1))*4];
-    let br=0,bg=0,bb=0;
-    corners.forEach(i=>{br+=px[i]/4;bg+=px[i+1]/4;bb+=px[i+2]/4;});
-    for(let i=0;i<px.length;i+=4){
-      const dr=px[i]-br,dg=px[i+1]-bg,db=px[i+2]-bb;
-      if(Math.sqrt(dr*dr+dg*dg+db*db)<55)px[i+3]=0;
-    }
-    ctx.putImageData(d,0,0);
-    CYRUS_NOBG=c.toDataURL('image/png');
-  };
-  img.src=CYRUS_IMG;
-})();
+// Image already has transparent background — no processing needed
+const CYRUS_NOBG=CYRUS_IMG;
 
 function launchGame(lvlIdx){
   if(pGame){pGame.destroy(true);pGame=null;}
@@ -257,11 +237,43 @@ function launchGame(lvlIdx){
     flag=this.add.zone(ld.flagX+35,455,80,190);
     this.physics.add.existing(flag,true);
 
+    // Princess Peach waiting at the flag
+    const peachX=ld.flagX+90, peachY=536;
+    const pg=this.add.graphics();
+    // Wide pink dress
+    pg.fillStyle(0xff66bb,1);
+    pg.fillTriangle(peachX-22,peachY,peachX+22,peachY,peachX-10,peachY-26);
+    pg.fillTriangle(peachX+22,peachY,peachX+10,peachY-26,peachX-10,peachY-26);
+    // White underskirt
+    pg.fillStyle(0xffffff,0.7);pg.fillEllipse(peachX,peachY-2,36,10);
+    // Bodice
+    pg.fillStyle(0xff44aa,1);pg.fillRect(peachX-8,peachY-42,16,18);
+    // Arms
+    pg.fillStyle(0xffddb0,1);
+    pg.fillEllipse(peachX-13,peachY-34,5,16);
+    pg.fillEllipse(peachX+13,peachY-34,5,16);
+    // Head
+    pg.fillStyle(0xffddb0,1);pg.fillCircle(peachX,peachY-52,10);
+    // Blonde hair
+    pg.fillStyle(0xffdd00,1);pg.fillEllipse(peachX,peachY-58,26,16);
+    pg.fillEllipse(peachX-11,peachY-50,8,14);pg.fillEllipse(peachX+11,peachY-50,8,14);
+    // Crown
+    pg.fillStyle(0xffcc00,1);pg.fillRect(peachX-9,peachY-68,18,5);
+    pg.fillTriangle(peachX-9,peachY-68,peachX-7,peachY-74,peachX-5,peachY-68);
+    pg.fillTriangle(peachX-1,peachY-68,peachX,peachY-76,peachX+1,peachY-68);
+    pg.fillTriangle(peachX+5,peachY-68,peachX+7,peachY-74,peachX+9,peachY-68);
+    pg.fillStyle(0xff2255,1);pg.fillCircle(peachX,peachY-70,2);
+    // Eyes & blush
+    pg.fillStyle(0x334499,1);pg.fillCircle(peachX-3,peachY-54,1.5);pg.fillCircle(peachX+3,peachY-54,1.5);
+    pg.fillStyle(0xffaaaa,0.6);pg.fillCircle(peachX-6,peachY-52,3);pg.fillCircle(peachX+6,peachY-52,3);
+    // Label
+    this.add.text(peachX,peachY-82,'Princess Peach!',{fontSize:'9px',color:'#ff44aa',fontStyle:'bold',stroke:'#fff',strokeThickness:2}).setOrigin(0.5,1);
+
     // Player using real Cyrus photo
     player=this.physics.add.image(120,460,'cyrus');
     player.setScale(0.11);
     player.setCollideWorldBounds(false);
-    player.body.setSize(30,75).setOffset(3,40);
+    player.body.setSize(30,75).setOffset(3,6);
     player.setDepth(10);
     // If addBase64 hasn't finished yet, swap texture in once it's ready
     const onTexAdd=(key)=>{if(key==='cyrus'&&player&&player.active){player.setTexture('cyrus');player.setScale(0.11);scene.textures.off('addtexture',onTexAdd);}};
