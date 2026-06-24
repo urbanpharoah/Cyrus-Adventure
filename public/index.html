@@ -431,25 +431,31 @@ function launchGame(lvlIdx){
     if(keys.water&&waterCD<=0){
       waterCD=22;
       const scene=pGame.scene.scenes[0];
-      const wg=scene.add.graphics();
-      wg.fillStyle(0x44aaff,1);wg.fillCircle(0,0,9);
-      wg.fillStyle(0xaaddff,0.8);wg.fillCircle(0,0,5);
-      const bTex='bullet_tex';
+      const bTex='bullet_hose';
       if(!scene.textures.exists(bTex)){
         const bg=scene.make.graphics({x:0,y:0,add:false});
-        bg.fillStyle(0x44aaff,1);bg.fillEllipse(10,7,20,14);
-        bg.fillStyle(0xaaddff,0.8);bg.fillEllipse(10,7,12,8);
-        bg.generateTexture(bTex,20,14);
+        // Wide stream body
+        bg.fillStyle(0x0077ee,1);bg.fillRect(0,3,58,10);
+        // Upper lighter blue highlight
+        bg.fillStyle(0x44aaff,0.9);bg.fillRect(0,3,58,4);
+        // White foam crest along top
+        bg.fillStyle(0xffffff,0.85);bg.fillRect(0,3,58,2);
+        // Leading-edge spray (right end = forward when facing right)
+        bg.fillStyle(0x88ccff,1);
+        bg.fillCircle(59,5,3);bg.fillCircle(61,9,3.5);bg.fillCircle(59,13,3);
+        bg.fillStyle(0xffffff,0.8);
+        bg.fillCircle(59,5,1.2);bg.fillCircle(62,9,1.5);bg.fillCircle(59,13,1.2);
+        bg.generateTexture(bTex,66,16);
         bg.destroy();
       }
-      wg.destroy();
-      const b=pGame.scene.scenes[0].physics.add.image(player.x+facing*26,player.y-5,bTex);
+      const b=scene.physics.add.image(player.x+facing*40,player.y-4,bTex);
+      b.setFlipX(facing===-1);
       b.setVelocityX(facing*400);
       b.setGravityY(-620);
       b.setDepth(9);
       bullets.add(b);
       scene.time.delayedCall(250,()=>{if(b.active)b.destroy();});
-      const wt=scene.add.text(player.x,player.y-34,'💧',{fontSize:'22px'});
+      const wt=scene.add.text(player.x,player.y-34,'💦',{fontSize:'22px'});
       wt.setDepth(20);
       scene.tweens.add({targets:wt,x:wt.x+facing*48,alpha:0,duration:320,onComplete:()=>wt.destroy()});
     }
