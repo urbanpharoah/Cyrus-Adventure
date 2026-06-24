@@ -278,13 +278,21 @@ function launchGame(lvlIdx){
     ld.enemies.forEach(e=>{
       const eg=this.make.graphics({x:0,y:0,add:false});
       if(e.t==='tarantula'){
-        eg.fillStyle(0x1a0a00,1);eg.fillEllipse(22,14,32,20);
-        eg.fillStyle(0x3d2810,1);eg.fillEllipse(22,24,24,16);
-        [[-16,8],[-12,16],[12,16],[16,8],[-18,12],[18,12],[-14,20],[14,20]].forEach(([lx,ly])=>{
-          eg.lineStyle(2.5,0x1a0a00,1);eg.lineBetween(22,18,22+lx,ly);
-        });
-        eg.fillStyle(0xff2200,1);eg.fillCircle(16,10,3.5);eg.fillCircle(28,10,3.5);
-        eg.fillStyle(0xffffff,0.8);eg.fillCircle(16,9,1.5);eg.fillCircle(28,9,1.5);
+        // Long legs first (drawn behind body)
+        eg.lineStyle(3.5,0x4a1e08,1);
+        // Left legs: [fromX,fromY, toX,toY]
+        [[32,22,3,4],[30,26,1,22],[30,30,2,38],[32,35,5,52]].forEach(([x1,y1,x2,y2])=>eg.lineBetween(x1,y1,x2,y2));
+        // Right legs (mirror)
+        [[48,22,77,4],[50,26,79,22],[50,30,78,38],[48,35,75,52]].forEach(([x1,y1,x2,y2])=>eg.lineBetween(x1,y1,x2,y2));
+        // Abdomen
+        eg.fillStyle(0x6b2f0c,1);eg.fillEllipse(40,38,28,22);
+        // Cephalothorax
+        eg.fillStyle(0x9b5020,1);eg.fillEllipse(40,22,30,22);
+        // Fur highlights
+        eg.fillStyle(0xb06030,0.5);eg.fillEllipse(40,20,22,14);
+        // Eyes
+        eg.fillStyle(0xff2200,1);eg.fillCircle(35,16,3.5);eg.fillCircle(45,16,3.5);
+        eg.fillStyle(0xffffff,0.9);eg.fillCircle(35,15,1.5);eg.fillCircle(45,15,1.5);
       } else if(e.t==='centipede'){
         for(let s=0;s<5;s++){
           eg.fillStyle(s%2===0?0xdd4400:0xbb3300,1);
@@ -305,7 +313,8 @@ function launchGame(lvlIdx){
         eg.fillStyle(0xff0000,0.6);eg.fillCircle(13,12,1.5);eg.fillCircle(23,12,1.5);
       }
       const ekey='e_'+e.t;
-      if(!scene.textures.exists(ekey))eg.generateTexture(ekey,44,36);
+      const [etw,eth]=e.t==='tarantula'?[80,56]:[44,36];
+      if(!scene.textures.exists(ekey))eg.generateTexture(ekey,etw,eth);
       eg.destroy();
       const spd=e.t==='centipede'?85:e.t==='goomba'?55:48;
       const en=enemies.create(e.x,e.y,ekey);
@@ -427,11 +436,11 @@ function launchGame(lvlIdx){
       }
       wg.destroy();
       const b=pGame.scene.scenes[0].physics.add.image(player.x+facing*26,player.y-5,bTex);
-      b.setVelocityX(facing*550);
+      b.setVelocityX(facing*400);
       b.setGravityY(-620);
       b.setDepth(9);
       bullets.add(b);
-      scene.time.delayedCall(1000,()=>{if(b.active)b.destroy();});
+      scene.time.delayedCall(100,()=>{if(b.active)b.destroy();});
       const wt=scene.add.text(player.x,player.y-34,'💧',{fontSize:'22px'});
       wt.setDepth(20);
       scene.tweens.add({targets:wt,x:wt.x+facing*48,alpha:0,duration:320,onComplete:()=>wt.destroy()});
