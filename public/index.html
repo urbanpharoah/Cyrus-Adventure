@@ -198,11 +198,6 @@ function launchGame(lvlIdx){
     });
 
     // Platforms
-    if(!this.textures.exists('px')){
-      const _g=this.make.graphics({x:0,y:0,add:false});
-      _g.fillStyle(0xffffff,1);_g.fillRect(0,0,1,1);
-      _g.generateTexture('px',1,1);_g.destroy();
-    }
     platforms=this.physics.add.staticGroup();
     ld.platforms.forEach(p=>{
       const g=this.add.graphics();
@@ -218,10 +213,16 @@ function launchGame(lvlIdx){
         for(let bx=p.x;bx<p.x+p.w;bx+=40)g.lineBetween(bx,p.y,bx,p.y+p.h);
         for(let by=p.y;by<p.y+p.h;by+=20)g.lineBetween(p.x,by,p.x+p.w,by);
       }
-      const pl=platforms.create(p.x+p.w/2,p.y+p.h/2,'px');
-      pl.setDisplaySize(p.w,p.h);
-      pl.setAlpha(0);
-      pl.refreshBody();
+      // Use a zone at (0,0) so the initial body setup is irrelevant,
+      // then hard-write every property directly — no origin/scale math can corrupt this
+      const pl=this.add.zone(0,0,1,1);
+      this.physics.add.existing(pl,true);
+      pl.body.x=p.x; pl.body.y=p.y;
+      pl.body.width=p.w; pl.body.height=p.h;
+      pl.body.right=p.x+p.w; pl.body.bottom=p.y+p.h;
+      pl.body.halfWidth=p.w/2; pl.body.halfHeight=p.h/2;
+      pl.body.center.set(p.x+p.w/2,p.y+p.h/2);
+      platforms.add(pl);
     });
 
     // Coins
@@ -256,15 +257,15 @@ function launchGame(lvlIdx){
     player=this.physics.add.image(120,490,'cyrus');
     player.setScale(0.11);
     player.setCollideWorldBounds(false);
-    // body height=61: body.bottom = player.y+30.5, feet sit ~10px into floor surface
-    player.body.setSize(30,61,true);
+    // setSize(30,81,true) — body matches sprite height so feet sit exactly at floor surface
+    player.body.setSize(30,81,true);
     player.setDepth(10);
     // addBase64 is async — re-apply scale+body once real texture is swapped in
     const onTexAdd=(key)=>{
       if(key==='cyrus'&&player&&player.active){
         player.setTexture('cyrus');
         player.setScale(0.11);
-        player.body.setSize(30,61,true);
+        player.body.setSize(30,81,true);
         scene.textures.off('addtexture',onTexAdd);
       }
     };
