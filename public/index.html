@@ -258,14 +258,14 @@ function launchGame(lvlIdx){
     player.setScale(0.11);
     player.setCollideWorldBounds(false);
     // body.halfHeight=81 so body.bottom reaches the actual physics floor while sprite feet align with visual floor
-    player.body.setSize(30,242,true);
+    player.body.setSize(30,282,true);
     player.setDepth(10);
     // addBase64 is async — re-apply scale+body once real texture is swapped in
     const onTexAdd=(key)=>{
       if(key==='cyrus'&&player&&player.active){
         player.setTexture('cyrus');
         player.setScale(0.11);
-        player.body.setSize(30,242,true);
+        player.body.setSize(30,282,true);
         scene.textures.off('addtexture',onTexAdd);
       }
     };
@@ -431,7 +431,7 @@ function launchGame(lvlIdx){
       b.setGravityY(-620);
       b.setDepth(9);
       bullets.add(b);
-      scene.time.delayedCall(400,()=>{if(b.active)b.destroy();});
+      scene.time.delayedCall(1000,()=>{if(b.active)b.destroy();});
       const wt=scene.add.text(player.x,player.y-34,'💧',{fontSize:'22px'});
       wt.setDepth(20);
       scene.tweens.add({targets:wt,x:wt.x+facing*48,alpha:0,duration:320,onComplete:()=>wt.destroy()});
