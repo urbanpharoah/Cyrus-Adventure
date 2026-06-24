@@ -448,7 +448,7 @@ function launchGame(lvlIdx){
       b.setGravityY(-620);
       b.setDepth(9);
       bullets.add(b);
-      scene.time.delayedCall(100,()=>{if(b.active)b.destroy();});
+      scene.time.delayedCall(250,()=>{if(b.active)b.destroy();});
       const wt=scene.add.text(player.x,player.y-34,'💧',{fontSize:'22px'});
       wt.setDepth(20);
       scene.tweens.add({targets:wt,x:wt.x+facing*48,alpha:0,duration:320,onComplete:()=>wt.destroy()});
