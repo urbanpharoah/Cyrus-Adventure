@@ -211,10 +211,12 @@ function launchGame(lvlIdx){
         for(let bx=p.x;bx<p.x+p.w;bx+=40)g.lineBetween(bx,p.y,bx,p.y+p.h);
         for(let by=p.y;by<p.y+p.h;by+=20)g.lineBetween(p.x,by,p.x+p.w,by);
       }
-      const pl=scene.add.zone(p.x+p.w/2,p.y+p.h/2,p.w,p.h);
+      const pl=scene.add.rectangle(p.x+p.w/2,p.y+p.h/2,p.w,p.h,0x000000);
+      pl.setAlpha(0);
       scene.physics.add.existing(pl,true);
       platforms.add(pl);
     });
+    platforms.refresh();
 
     // Coins
     coins=this.physics.add.staticGroup();
@@ -270,13 +272,13 @@ function launchGame(lvlIdx){
     this.add.text(peachX,peachY-82,'Princess Peach!',{fontSize:'9px',color:'#ff44aa',fontStyle:'bold',stroke:'#fff',strokeThickness:2}).setOrigin(0.5,1);
 
     // Player using real Cyrus photo
-    player=this.physics.add.image(120,460,'cyrus');
+    player=this.physics.add.image(120,490,'cyrus');
     player.setScale(0.11);
     player.setCollideWorldBounds(false);
     player.body.setSize(30,75).setOffset(3,6);
     player.setDepth(10);
-    // If addBase64 hasn't finished yet, swap texture in once it's ready
-    const onTexAdd=(key)=>{if(key==='cyrus'&&player&&player.active){player.setTexture('cyrus');player.setScale(0.11);scene.textures.off('addtexture',onTexAdd);}};
+    // addBase64 is async — re-apply body once real texture dimensions are known
+    const onTexAdd=(key)=>{if(key==='cyrus'&&player&&player.active){player.setTexture('cyrus');player.setScale(0.11);player.body.setSize(30,75).setOffset(3,6);scene.textures.off('addtexture',onTexAdd);}};
     if(!scene.textures.exists('cyrus'))scene.textures.on('addtexture',onTexAdd);
 
     bullets=this.physics.add.group();
